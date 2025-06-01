@@ -14,14 +14,24 @@ async fn main() {
             println!("Trying to connect to port:{}", port);
             if let Ok(mut stream) = TcpStream::connect(&addr).await {
                 println!("Connection established wiht port:{}", port);
-                let file_path = format!("file{}.bin", i);
-                let mut file = File::create(&file_path).await.expect("failure");
                 let mut chunk = Vec::new();
-                let _ = stream.read_to_end(&mut chunk).await;
-                let _ = file.write_all(&chunk).await;
+                if let Ok(_) = stream.read_to_end(&mut chunk).await {
+                    return Some((i, chunk));
+                }
             }
+            None
         });
         handles.push(handle);
     }
-    join_all(handles).await;
+    let result = join_all(handles).await;
+
+    let mut chunks = vec![Vec::new(); 4];
+    for res in result {
+        let (i, chunk) = res.unwrap().unwrap();
+        chunks[i] = chunk
+    }
+    let mut output = File::create("ouput_final.txt").await.expect("failed");
+    for chunk in chunks {
+        output.write_all(&chunk).await.expect("failed ");
+    }
 }
