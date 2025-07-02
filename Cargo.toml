@@ -10,4 +10,6 @@ name = "client"
 path = "Client/client.rs"
 [dependencies]
 futures = "0.3.31"
+hex = "0.4.3"
+sha2 = "0.10.9"
 tokio = { version = "1.45.0", features = ["fs", "io-std", "io-util", "macros", "net", "rt", "rt-multi-thread", "time"] }
