@@ -10,7 +10,7 @@ use verification::hash_creation;
 #[tokio::main]
 async fn main() {
     println!("server starting");
-    let mut file = File::open("sarvil.txt").await.expect("file opening failed");
+    let mut file = File::open("../sarvil.txt").await.expect("file opening failed");
     let metadata = file.metadata().await.expect("no metadata found");
     let length = metadata.len();
     let chunks = length / 4;
@@ -18,7 +18,7 @@ async fn main() {
     let mut handles = Vec::new();
     for i in 0..4 {
         println!("Server:{}", i);
-        let mut file = File::open("sarvil.txt").await.expect("file opening failed");
+        let mut file = File::open("../sarvil.txt").await.expect("file opening failed");
         let size = i * chunks;
         let chunk_size = if i == 3 { chunks + remainder } else { chunks };
         let current_port = 8000 + i as u16;
@@ -29,7 +29,7 @@ async fn main() {
             loop {
                 let (mut stream, _) = listener.accept().await.unwrap();
                 println!("The server is connecting to {}", current_port);
-                let mut file = File::open("sarvil.txt").await.expect("file opening failed");
+                let mut file = File::open("../sarvil.txt").await.expect("file opening failed");
                 let _ = file.seek(SeekFrom::Start(size)).await.unwrap();
                 let mut buffer = vec![0u8; chunk_size as usize];
                 let _ = file.read_exact(&mut buffer).await.unwrap();
